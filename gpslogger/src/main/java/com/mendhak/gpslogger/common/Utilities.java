@@ -18,7 +18,7 @@
 package com.mendhak.gpslogger.common;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+
 import android.app.ProgressDialog;
 import android.content.*;
 import android.content.pm.ApplicationInfo;
@@ -40,6 +40,7 @@ import ch.qos.logback.classic.android.LogcatAppender;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.mendhak.gpslogger.R;
 import com.mendhak.gpslogger.senders.dropbox.DropBoxHelper;
 import com.mendhak.gpslogger.senders.ftp.FtpHelper;
@@ -319,24 +320,25 @@ public class Utilities {
      */
     private static void MsgBox(String title, String message, Context className,
                                final IMessageBoxCallback msgCallback) {
-        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(className);
-        alertBuilder.setTitle(title)
-                .setMessage(message)
-                .setCancelable(false)
-                .setPositiveButton(className.getString(R.string.ok),
-                        new DialogInterface.OnClickListener() {
-
-                            public void onClick(final DialogInterface dialog,
-                                                final int which) {
-
-                                if (msgCallback != null) {
-                                    msgCallback.MessageBoxResult(which);
-                                }
-                            }
+        MaterialDialog.Builder alertBuilder = new MaterialDialog.Builder(className);
+        alertBuilder.title(title)
+                .content(message)
+                .positiveText(R.string.ok)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        if (msgCallback != null) {
+                            msgCallback.MessageBoxResult(0);
                         }
-                );
+                    }
 
-        AlertDialog alertDialog = alertBuilder.create();
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        super.onNegative(dialog);
+                    }
+                });
+
+        MaterialDialog alertDialog = alertBuilder.build();
 
         if (className instanceof Activity && !((Activity) className).isFinishing()) {
             alertDialog.show();

@@ -19,7 +19,7 @@ package com.mendhak.gpslogger;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.AlertDialog;
+
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -470,13 +470,7 @@ public class GpsMainActivity extends Activity
 
         MaterialDialog.Builder alert = new MaterialDialog.Builder(GpsMainActivity.this);
         alert.title(R.string.add_description);
-        //alert.setMessage(R.string.letters_numbers);
 
-        // Set an EditText view to get user input
-//        final EditText input = new EditText(getApplicationContext());
-//        input.setTextColor(getResources().getColor(android.R.color.black));
-//        input.setBackgroundColor(getResources().getColor(android.R.color.white));
-//        input.setText(Session.getDescription());
         alert.customView(R.layout.alertview);
         alert.positiveText(R.string.ok);
         alert.callback(new MaterialDialog.ButtonCallback() {
@@ -651,80 +645,6 @@ public class GpsMainActivity extends Activity
                         }
                     }).show();
 
-//            // Set the dialog title
-//            builder.setTitle(R.string.osm_pick_file)
-//                    // Specify the list array, the items to be selected by default (null for none),
-//                    // and the listener through which to receive callbacks when items are selected
-//                    .setMultiChoiceItems(files, null,
-//                            new DialogInterface.OnMultiChoiceClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialog, int which,
-//                                                    boolean isChecked) {
-//
-//
-//                                    if (isChecked) {
-//
-//                                        if (which == 0) {
-//                                            //Unselect all others
-//                                            ((AlertDialog) dialog).getListView().clearChoices();
-//                                            ((AlertDialog) dialog).getListView().setItemChecked(which, isChecked);
-//                                            selectedItems.clear();
-//                                        } else {
-//                                            //Unselect the settings item
-//                                            ((AlertDialog) dialog).getListView().setItemChecked(0, false);
-//                                            if (selectedItems.contains(0)) {
-//                                                selectedItems.remove(selectedItems.indexOf(0));
-//                                            }
-//                                        }
-//
-//                                        selectedItems.add(which);
-//                                    } else if (selectedItems.contains(which)) {
-//                                        // Else, if the item is already in the array, remove it
-//                                        selectedItems.remove(Integer.valueOf(which));
-//                                    }
-//
-//                                }
-//                            }
-//                    )
-//                            // Set the action buttons
-//                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int id) {
-//
-//                            if (selectedItems.size() > 0 && selectedItems.get(0).equals(0)) {
-//                                startActivity(settingsIntent);
-//                            } else {
-//
-//
-//                                List<File> chosenFiles = new ArrayList<File>();
-//
-//                                for (Object item : selectedItems) {
-//                                    tracer.info("Selected file to upload- " + files[Integer.valueOf(item.toString())]);
-//                                    chosenFiles.add(new File(gpxFolder, files[Integer.valueOf(item.toString())]));
-//                                }
-//
-//                                selectedItems.clear();
-//
-//                                if (chosenFiles.size() > 0) {
-//                                    Utilities.ShowProgress(GpsMainActivity.this, getString(R.string.please_wait),
-//                                            getString(R.string.please_wait));
-//                                    sender.UploadFile(chosenFiles);
-//                                }
-//
-//                            }
-//
-//                        }
-//                    })
-//                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int id) {
-//                            selectedItems.clear();
-//                        }
-//                    });
-//
-//            builder.create();
-//            builder.show();
-
         } else {
             Utilities.MsgBox(getString(R.string.sorry), getString(R.string.no_files_found), this);
         }
@@ -814,88 +734,7 @@ public class GpsMainActivity extends Activity
                                 }
                             }
                         }).show();
-//                        .setMultiChoiceItems(files, null,
-//                                new DialogInterface.OnMultiChoiceClickListener() {
-//                                    @Override
-//                                    public void onClick(DialogInterface dialog, int which,
-//                                                        boolean isChecked) {
-//
-//                                        if (isChecked) {
-//
-//                                            if (which == 0) {
-//                                                //Unselect all others
-//                                                ((AlertDialog) dialog).getListView().clearChoices();
-//                                                ((AlertDialog) dialog).getListView().setItemChecked(which, isChecked);
-//                                                selectedItems.clear();
-//                                            } else {
-//                                                //Unselect the settings item
-//                                                ((AlertDialog) dialog).getListView().setItemChecked(0, false);
-//                                                if (selectedItems.contains(0)) {
-//                                                    selectedItems.remove(selectedItems.indexOf(0));
-//                                                }
-//                                            }
-//
-//                                            selectedItems.add(which);
-//                                        } else if (selectedItems.contains(which)) {
-//                                            // Else, if the item is already in the array, remove it
-//                                            selectedItems.remove(Integer.valueOf(which));
-//                                        }
-//                                    }
-//                                }
-//                        )
-//                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int id) {
-//
-//                                if(selectedItems.size() <= 0){
-//                                    return;
-//                                }
-//
-//                                final Intent intent = new Intent(Intent.ACTION_SEND);
-//                                intent.setType("*/*");
-//
-//                                if (selectedItems.get(0).equals(0)) {
-//
-//                                    tracer.debug("User selected location only");
-//                                    intent.setType("text/plain");
-//
-//                                    intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.sharing_mylocation));
-//                                    if (Session.hasValidLocation()) {
-//                                        String bodyText = getString(R.string.sharing_googlemaps_link,
-//                                                String.valueOf(Session.getCurrentLatitude()),
-//                                                String.valueOf(Session.getCurrentLongitude()));
-//                                        intent.putExtra(Intent.EXTRA_TEXT, bodyText);
-//                                        intent.putExtra("sms_body", bodyText);
-//                                        startActivity(Intent.createChooser(intent, getString(R.string.sharing_via)));
-//                                    }
-//
-//                                } else {
-//                                    intent.setAction(Intent.ACTION_SEND_MULTIPLE);
-//                                    intent.putExtra(Intent.EXTRA_SUBJECT, "Here are some files.");
-//                                    intent.setType("*/*");
-//
-//                                    ArrayList<Uri> chosenFiles = new ArrayList<Uri>();
-//
-//                                    for (Object path : selectedItems) {
-//                                        File file = new File(gpxFolder, files[Integer.valueOf(path.toString())]);
-//                                        Uri uri = Uri.fromFile(file);
-//                                        chosenFiles.add(uri);
-//                                    }
-//
-//                                    intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, chosenFiles);
-//                                    startActivity(Intent.createChooser(intent, getString(R.string.sharing_via)));
-//                                }
-//                            }
-//                        })
-//                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int id) {
-//                                selectedItems.clear();
-//                            }
-//                        });
 
-                //builder.build();
-                //builder.show();
 
             } else {
                 Utilities.MsgBox(getString(R.string.sorry), getString(R.string.no_files_found), this);
@@ -1096,8 +935,6 @@ public class GpsMainActivity extends Activity
     @Override
     public void onRequestStartLogging() {
         tracer.info(".");
-
-
 
         if(AppSettings.isCustomFile()  && AppSettings.shouldAskCustomFileNameEachTime()){
             MaterialDialog.Builder alert = new MaterialDialog.Builder(this);

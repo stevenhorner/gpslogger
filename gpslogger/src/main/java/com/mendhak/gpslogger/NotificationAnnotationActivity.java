@@ -33,9 +33,6 @@ public class NotificationAnnotationActivity extends Activity {
         MaterialDialog.Builder alert = new MaterialDialog.Builder(this);
 
         alert.title(R.string.add_description);
-        //alert.setMessage(R.string.letters_numbers);
-
-        //final EditText input = new EditText(this);
 
         alert.customView(R.layout.alertview,false)
                 .positiveText(R.string.ok)
@@ -70,8 +67,6 @@ public class NotificationAnnotationActivity extends Activity {
                 finish();
             }
         });
-
-
 
         MaterialDialog alertDialog = alert.build();
         TextView tvMessage = (TextView)alertDialog.getCustomView().findViewById(R.id.alert_user_message);
