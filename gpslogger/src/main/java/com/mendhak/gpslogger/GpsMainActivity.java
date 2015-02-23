@@ -731,7 +731,7 @@ public class GpsMainActivity extends Activity
                 final String[] files = fileList.toArray(new String[fileList.size()]);
 
 
-                final ArrayList selectedItems = new ArrayList();  // Where we track the selected items
+                //final ArrayList selectedItems = new ArrayList();  // Where we track the selected items
 
                 MaterialDialog.Builder builder = new MaterialDialog.Builder(this);
                 // Set the dialog title
@@ -742,16 +742,16 @@ public class GpsMainActivity extends Activity
                         .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMulti() {
                             @Override
                             public void onSelection(MaterialDialog materialDialog, Integer[] integers, CharSequence[] charSequences) {
-                                List<Integer> which = Arrays.asList(integers);
+                                List<Integer> selectedItems = Arrays.asList(integers);
 
                                 final Intent intent = new Intent(Intent.ACTION_SEND);
                                 intent.setType("*/*");
 
-                                if (which.size() <= 0) {
+                                if (selectedItems.size() <= 0) {
                                     return;
                                 }
 
-                                if (which.contains(0)) {
+                                if (selectedItems.contains(0)) {
 
                                     tracer.debug("User selected location only");
                                     intent.setType("text/plain");
