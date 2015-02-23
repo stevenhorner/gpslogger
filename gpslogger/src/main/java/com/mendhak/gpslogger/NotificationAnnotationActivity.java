@@ -1,7 +1,7 @@
 package com.mendhak.gpslogger;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.TextView;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.mendhak.gpslogger.common.Session;
 import com.mendhak.gpslogger.common.Utilities;
 import org.slf4j.LoggerFactory;
@@ -28,41 +30,52 @@ public class NotificationAnnotationActivity extends Activity {
 
         tracer = LoggerFactory.getLogger(GpsLoggingService.class.getSimpleName());
 
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        MaterialDialog.Builder alert = new MaterialDialog.Builder(this);
 
-        alert.setTitle(R.string.add_description);
-        alert.setMessage(R.string.letters_numbers);
+        alert.title(R.string.add_description);
+        //alert.setMessage(R.string.letters_numbers);
 
-        final EditText input = new EditText(this);
-        alert.setView(input);
+        //final EditText input = new EditText(this);
 
-        alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                tracer.info("Notification annotation: " + input.getText().toString());
+        alert.customView(R.layout.alertview,false)
+                .positiveText(R.string.ok)
+                .negativeText(R.string.cancel)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onNeutral(MaterialDialog dialog) {
+                        super.onNeutral(dialog);
+                    }
 
-                Intent serviceIntent = new Intent(getApplicationContext(), GpsLoggingService.class);
-                serviceIntent.putExtra("setnextpointdescription", input.getText().toString());
-                getApplicationContext().startService(serviceIntent);
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        finish();
+                    }
 
-                finish();
-            }
-        });
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
 
-        alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                finish();
-            }
-        });
+                        EditText userInput = (EditText) dialog.getCustomView().findViewById(R.id.alert_user_input);
+                        tracer.info("Notification annotation: " + userInput.getText().toString());
 
-        alert.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        Intent serviceIntent = new Intent(getApplicationContext(), GpsLoggingService.class);
+                        serviceIntent.putExtra("setnextpointdescription", userInput.getText().toString());
+                        getApplicationContext().startService(serviceIntent);
+
+                        finish();
+                    }
+                }).cancelListener(new DialogInterface.OnCancelListener() {
             @Override
-            public void onCancel(DialogInterface dialogInterface) {
-                dialogInterface.dismiss();
+            public void onCancel(DialogInterface dialog) {
+                dialog.dismiss();
                 finish();
             }
         });
 
-        AlertDialog alertDialog = alert.create();
+
+
+        MaterialDialog alertDialog = alert.build();
+        TextView tvMessage = (TextView)alertDialog.getCustomView().findViewById(R.id.alert_user_message);
+        tvMessage.setText(R.string.letters_numbers);
         alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         alertDialog.show();
     }

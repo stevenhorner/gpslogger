@@ -42,13 +42,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.SpinnerAdapter;
-import android.widget.Toast;
+import android.widget.*;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.mendhak.gpslogger.common.AppSettings;
 import com.mendhak.gpslogger.common.IActionListener;
 import com.mendhak.gpslogger.common.Session;
@@ -473,21 +468,22 @@ public class GpsMainActivity extends Activity
             return;
         }
 
-        AlertDialog.Builder alert = new AlertDialog.Builder(GpsMainActivity.this);
-        alert.setTitle(R.string.add_description);
-        alert.setMessage(R.string.letters_numbers);
+        MaterialDialog.Builder alert = new MaterialDialog.Builder(GpsMainActivity.this);
+        alert.title(R.string.add_description);
+        //alert.setMessage(R.string.letters_numbers);
 
         // Set an EditText view to get user input
-        final EditText input = new EditText(getApplicationContext());
-        input.setTextColor(getResources().getColor(android.R.color.black));
-        input.setBackgroundColor(getResources().getColor(android.R.color.white));
-        input.setText(Session.getDescription());
-        alert.setView(input);
-
-        /* ok */
-        alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                final String desc = Utilities.CleanDescription(input.getText().toString());
+//        final EditText input = new EditText(getApplicationContext());
+//        input.setTextColor(getResources().getColor(android.R.color.black));
+//        input.setBackgroundColor(getResources().getColor(android.R.color.white));
+//        input.setText(Session.getDescription());
+        alert.customView(R.layout.alertview);
+        alert.positiveText(R.string.ok);
+        alert.callback(new MaterialDialog.ButtonCallback() {
+            @Override
+            public void onPositive(MaterialDialog dialog) {
+                EditText userInput = (EditText) dialog.getCustomView().findViewById(R.id.alert_user_input);
+                final String desc = Utilities.CleanDescription(userInput.getText().toString());
                 if (desc.length() == 0) {
                     tracer.debug("Clearing annotation");
                     Session.clearDescription();
@@ -502,17 +498,16 @@ public class GpsMainActivity extends Activity
                         LogSinglePoint();
                     }
                 }
-            }
 
-        });
-
-        alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Cancelled.
             }
         });
 
-        AlertDialog alertDialog = alert.create();
+
+        MaterialDialog alertDialog = alert.build();
+        EditText userInput = (EditText) alertDialog.getCustomView().findViewById(R.id.alert_user_input);
+        userInput.setText(Session.getDescription());
+        TextView tvMessage = (TextView)alertDialog.getCustomView().findViewById(R.id.alert_user_message);
+        tvMessage.setText(R.string.letters_numbers);
         alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         alertDialog.show();
     }
@@ -1027,43 +1022,44 @@ public class GpsMainActivity extends Activity
 
 
         if(AppSettings.isCustomFile()  && AppSettings.shouldAskCustomFileNameEachTime()){
-            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            MaterialDialog.Builder alert = new MaterialDialog.Builder(this);
 
 
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             final EditText input = new EditText(this);
             input.setText(AppSettings.getCustomFileName());
-            alert.setView(input);
+            alert.customView(input);
 
-            alert.setTitle(R.string.new_file_custom_title)
-                    .setMessage(R.string.new_file_custom_message)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
 
+            alert.title(R.string.new_file_custom_title)
+                    //.message(R.string.new_file_custom_message)
+                    .positiveText(android.R.string.yes)
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onPositive(MaterialDialog dialog) {
                             String chosenFileName = AppSettings.getCustomFileName();
-
-                            if(!Utilities.IsNullOrEmpty(input.getText().toString()) && !input.getText().toString().equalsIgnoreCase(chosenFileName)){
+                            if (!Utilities.IsNullOrEmpty(input.getText().toString()) && !input.getText().toString().equalsIgnoreCase(chosenFileName)) {
                                 chosenFileName = input.getText().toString();
                                 SharedPreferences.Editor editor = prefs.edit();
                                 editor.putString("new_file_custom_name", chosenFileName);
                                 editor.commit();
                             }
-
                             StartLogging();
                         }
-                    })
-                    .setOnKeyListener(new DialogInterface.OnKeyListener() {
-                        @Override
-                        public boolean onKey(DialogInterface dialogInterface, int keycode, KeyEvent keyEvent) {
-                            if (keycode == KeyEvent.KEYCODE_BACK) {
-                                StartLogging();
-                                dialogInterface.dismiss();
-                            }
-                            return true;
-                        }
-                    });
 
-            AlertDialog alertDialog = alert.create();
+                    })
+            .keyListener(new DialogInterface.OnKeyListener() {
+                @Override
+                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+                        StartLogging();
+                        dialog.dismiss();
+                    }
+                    return true;
+                }
+            });
+
+            MaterialDialog alertDialog = alert.build();
             alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             alertDialog.show();
         }
