@@ -733,50 +733,25 @@ public class GpsMainActivity extends Activity
 
                 final ArrayList selectedItems = new ArrayList();  // Where we track the selected items
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                MaterialDialog.Builder builder = new MaterialDialog.Builder(this);
                 // Set the dialog title
-                builder.setTitle(R.string.osm_pick_file)
-                        .setMultiChoiceItems(files, null,
-                                new DialogInterface.OnMultiChoiceClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which,
-                                                        boolean isChecked) {
-
-                                        if (isChecked) {
-
-                                            if (which == 0) {
-                                                //Unselect all others
-                                                ((AlertDialog) dialog).getListView().clearChoices();
-                                                ((AlertDialog) dialog).getListView().setItemChecked(which, isChecked);
-                                                selectedItems.clear();
-                                            } else {
-                                                //Unselect the settings item
-                                                ((AlertDialog) dialog).getListView().setItemChecked(0, false);
-                                                if (selectedItems.contains(0)) {
-                                                    selectedItems.remove(selectedItems.indexOf(0));
-                                                }
-                                            }
-
-                                            selectedItems.add(which);
-                                        } else if (selectedItems.contains(which)) {
-                                            // Else, if the item is already in the array, remove it
-                                            selectedItems.remove(Integer.valueOf(which));
-                                        }
-                                    }
-                                }
-                        )
-                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                builder.title(R.string.osm_pick_file)
+                        .items(files)
+                        .positiveText(R.string.ok)
+                        //.alwaysCallMultiChoiceCallback()
+                        .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMulti() {
                             @Override
-                            public void onClick(DialogInterface dialog, int id) {
-
-                                if(selectedItems.size() <= 0){
-                                    return;
-                                }
+                            public void onSelection(MaterialDialog materialDialog, Integer[] integers, CharSequence[] charSequences) {
+                                List<Integer> which = Arrays.asList(integers);
 
                                 final Intent intent = new Intent(Intent.ACTION_SEND);
                                 intent.setType("*/*");
 
-                                if (selectedItems.get(0).equals(0)) {
+                                if (which.size() <= 0) {
+                                    return;
+                                }
+
+                                if (which.contains(0)) {
 
                                     tracer.debug("User selected location only");
                                     intent.setType("text/plain");
@@ -790,8 +765,8 @@ public class GpsMainActivity extends Activity
                                         intent.putExtra("sms_body", bodyText);
                                         startActivity(Intent.createChooser(intent, getString(R.string.sharing_via)));
                                     }
-
                                 } else {
+
                                     intent.setAction(Intent.ACTION_SEND_MULTIPLE);
                                     intent.putExtra(Intent.EXTRA_SUBJECT, "Here are some files.");
                                     intent.setType("*/*");
@@ -808,16 +783,89 @@ public class GpsMainActivity extends Activity
                                     startActivity(Intent.createChooser(intent, getString(R.string.sharing_via)));
                                 }
                             }
-                        })
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                selectedItems.clear();
-                            }
-                        });
+                        }).show();
+//                        .setMultiChoiceItems(files, null,
+//                                new DialogInterface.OnMultiChoiceClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog, int which,
+//                                                        boolean isChecked) {
+//
+//                                        if (isChecked) {
+//
+//                                            if (which == 0) {
+//                                                //Unselect all others
+//                                                ((AlertDialog) dialog).getListView().clearChoices();
+//                                                ((AlertDialog) dialog).getListView().setItemChecked(which, isChecked);
+//                                                selectedItems.clear();
+//                                            } else {
+//                                                //Unselect the settings item
+//                                                ((AlertDialog) dialog).getListView().setItemChecked(0, false);
+//                                                if (selectedItems.contains(0)) {
+//                                                    selectedItems.remove(selectedItems.indexOf(0));
+//                                                }
+//                                            }
+//
+//                                            selectedItems.add(which);
+//                                        } else if (selectedItems.contains(which)) {
+//                                            // Else, if the item is already in the array, remove it
+//                                            selectedItems.remove(Integer.valueOf(which));
+//                                        }
+//                                    }
+//                                }
+//                        )
+//                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int id) {
+//
+//                                if(selectedItems.size() <= 0){
+//                                    return;
+//                                }
+//
+//                                final Intent intent = new Intent(Intent.ACTION_SEND);
+//                                intent.setType("*/*");
+//
+//                                if (selectedItems.get(0).equals(0)) {
+//
+//                                    tracer.debug("User selected location only");
+//                                    intent.setType("text/plain");
+//
+//                                    intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.sharing_mylocation));
+//                                    if (Session.hasValidLocation()) {
+//                                        String bodyText = getString(R.string.sharing_googlemaps_link,
+//                                                String.valueOf(Session.getCurrentLatitude()),
+//                                                String.valueOf(Session.getCurrentLongitude()));
+//                                        intent.putExtra(Intent.EXTRA_TEXT, bodyText);
+//                                        intent.putExtra("sms_body", bodyText);
+//                                        startActivity(Intent.createChooser(intent, getString(R.string.sharing_via)));
+//                                    }
+//
+//                                } else {
+//                                    intent.setAction(Intent.ACTION_SEND_MULTIPLE);
+//                                    intent.putExtra(Intent.EXTRA_SUBJECT, "Here are some files.");
+//                                    intent.setType("*/*");
+//
+//                                    ArrayList<Uri> chosenFiles = new ArrayList<Uri>();
+//
+//                                    for (Object path : selectedItems) {
+//                                        File file = new File(gpxFolder, files[Integer.valueOf(path.toString())]);
+//                                        Uri uri = Uri.fromFile(file);
+//                                        chosenFiles.add(uri);
+//                                    }
+//
+//                                    intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, chosenFiles);
+//                                    startActivity(Intent.createChooser(intent, getString(R.string.sharing_via)));
+//                                }
+//                            }
+//                        })
+//                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int id) {
+//                                selectedItems.clear();
+//                            }
+//                        });
 
-                builder.create();
-                builder.show();
+                //builder.build();
+                //builder.show();
 
             } else {
                 Utilities.MsgBox(getString(R.string.sorry), getString(R.string.no_files_found), this);
