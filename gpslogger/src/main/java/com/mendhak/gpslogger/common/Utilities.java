@@ -64,7 +64,7 @@ import java.util.*;
 public class Utilities {
 
     private static final int LOGLEVEL = 5;
-    private static ProgressDialog pd;
+    private static MaterialDialog pd;
     private static org.slf4j.Logger tracer = LoggerFactory.getLogger(Utilities.class.getSimpleName());
 
 
@@ -282,11 +282,12 @@ public class Utilities {
 
     public static void ShowProgress(Context ctx, String title, String message) {
         if (ctx != null) {
-            pd = new ProgressDialog(ctx, ProgressDialog.STYLE_HORIZONTAL);
-            pd.setMax(100);
-            pd.setIndeterminate(true);
 
-            pd = ProgressDialog.show(ctx, title, message, true, true);
+            pd = new MaterialDialog.Builder(ctx)
+                    .title(title)
+                    .content(message)
+                    .progress(true, 0)
+                    .show();
         }
     }
 
