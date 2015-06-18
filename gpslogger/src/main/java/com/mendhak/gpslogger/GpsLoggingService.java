@@ -469,8 +469,7 @@ public class GpsLoggingService extends Service  {
         long notificationTime = System.currentTimeMillis();
 
         if (Session.hasValidLocation()) {
-            contentText = getString(R.string.txt_latitude_short) + ": " + nf.format(Session.getCurrentLatitude()) + ", "
-                    + getString(R.string.txt_longitude_short) + ": " + nf.format(Session.getCurrentLongitude());
+            contentText = Double.toString(Session.getTotalTravelled()); // Display Distance Travelled and convert from a Double to a string
 
             notificationTime = Session.getCurrentLocationInfo().getTime();
         }
