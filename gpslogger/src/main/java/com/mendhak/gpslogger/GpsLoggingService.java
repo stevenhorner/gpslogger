@@ -469,7 +469,7 @@ public class GpsLoggingService extends Service  {
         long notificationTime = System.currentTimeMillis();
 
         if (Session.hasValidLocation()) {
-            contentText = Double.toString(Session.getTotalTravelled()); // Display Distance Travelled and convert from a Double to a string
+            contentText = Double.toString(round(Session.getTotalTravelled()/1609.344,2)); // Display Distance Travelled in miles and convert from a Double to a string
 
             notificationTime = Session.getCurrentLocationInfo().getTime();
         }
