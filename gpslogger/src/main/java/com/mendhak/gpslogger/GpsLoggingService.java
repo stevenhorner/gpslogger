@@ -470,7 +470,7 @@ public class GpsLoggingService extends Service  {
         long notificationTime = System.currentTimeMillis();
 
         if (Session.hasValidLocation()) {
-            contentText = df.format(Session.getTotalTravelled()/1609.344); // Display Distance Travelled in miles and convert from a Double to a string
+            contentText = df.format(Session.getTotalTravelled()/1609.344) + ", " + (Utilities.GetTimeDisplay(getApplicationContext(), Session.getLatestTimeStamp()-Session.getStartTimeStamp())); // Display Distance Travelled in miles and convert from a Double to a string
 
             notificationTime = Session.getCurrentLocationInfo().getTime();
         }
@@ -485,7 +485,7 @@ public class GpsLoggingService extends Service  {
 
             if(!AppSettings.shouldHideNotificationButtons()){
                 nfc.addAction(R.drawable.annotate2, getString(R.string.menu_annotate), piAnnotate)
-                        .addAction(android.R.drawable.ic_menu_close_clear_cancel, getString(R.string.shortcut_stop), piStop);
+                .addAction(android.R.drawable.ic_menu_close_clear_cancel, getString(R.string.shortcut_stop), piStop);
             }
         }
 
