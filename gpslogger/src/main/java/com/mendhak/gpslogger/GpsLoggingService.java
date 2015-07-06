@@ -464,12 +464,13 @@ public class GpsLoggingService extends Service  {
 
 
         NumberFormat nf = new DecimalFormat("###.#####");
+        DecimalFormat df = new DecimalFormat("#.000");
 
         String contentText = getString(R.string.gpslogger_still_running);
         long notificationTime = System.currentTimeMillis();
 
         if (Session.hasValidLocation()) {
-            contentText = Double.toString(round(Session.getTotalTravelled()/1609.344,2)); // Display Distance Travelled in miles and convert from a Double to a string
+            contentText = df.format(Session.getTotalTravelled()/1609.344); // Display Distance Travelled in miles and convert from a Double to a string
 
             notificationTime = Session.getCurrentLocationInfo().getTime();
         }
