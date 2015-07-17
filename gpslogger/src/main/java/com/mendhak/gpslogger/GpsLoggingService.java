@@ -470,7 +470,7 @@ public class GpsLoggingService extends Service  {
         long notificationTime = System.currentTimeMillis();
 
         if (Session.hasValidLocation()) {
-            contentText = df.format(Session.getTotalTravelled()/1609.344) + ", " + (Utilities.GetTimeDisplay(getApplicationContext(), Session.getLatestTimeStamp()-Session.getStartTimeStamp())) + ", " + (Utilities.GetDistanceDisplay(getApplicationContext(), Session.getCurrentLocationInfo().getAltitude(), AppSettings.shouldUseImperial())); // Display Distance Travelled in miles and convert from a Double to a string
+            contentText = df.format(Session.getTotalTravelled()/1609.344) + ", " + (Utilities.GetTimeDisplay(getApplicationContext(), Session.getLatestTimeStamp()-Session.getStartTimeStamp())) + ", " + df.format((Session.getCurrentLocationInfo().getAltitude() * 3.2808399)); // Display Distance Travelled in miles and convert from a Double to a string
 
             notificationTime = Session.getCurrentLocationInfo().getTime();
         }
